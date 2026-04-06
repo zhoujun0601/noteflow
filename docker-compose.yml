@@ -1,0 +1,24 @@
+services:
+  noteflow:
+    image: koalalove/noteflow:latest
+    container_name: noteflow
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      # ── 必须修改 ──────────────────────────────────────────
+      JWT_SECRET:        "${JWT_SECRET:?JWT_SECRET must be set (min 32 chars)}"
+      # ── 数据库 ────────────────────────────────────────────
+      POSTGRES_USER:     "${POSTGRES_USER:-notes_user}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-notes_pass}"
+      POSTGRES_DB:       "${POSTGRES_DB:-notes_db}"
+      DATABASE_URL:      "postgresql://${POSTGRES_USER:-notes_user}:${POSTGRES_PASSWORD:-notes_pass}@127.0.0.1:5432/${POSTGRES_DB:-notes_db}"
+      # ── 其他 ──────────────────────────────────────────────
+      NODE_ENV:    production
+      PORT:        "4000"
+      CORS_ORIGIN: "${CORS_ORIGIN:-*}"
+    volumes:
+      - noteflow_pgdata:/var/lib/postgresql/data
+volumes:
+  noteflow_pgdata:
+
